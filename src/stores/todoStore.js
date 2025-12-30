@@ -49,7 +49,7 @@ export const useTodoStore = defineStore("todo", () => {
         if(!newTodo.value.trim()) return;
 
         const todoToAdd = {
-            id: date.now(),
+            id: Date.now(),
             text: newTodo.value.trim(),
             completed: false,
             dateKey: formatDateKey(selectedDate.value),
@@ -101,6 +101,21 @@ export const useTodoStore = defineStore("todo", () => {
         if(level === "High") return "bg-red-500"
         return ""
     }
+    const removeTask = (id) => {
+        const todoIndex = tasks.value.todo.findIndex(t => t.id === id);
+        if (todoIndex !== -1) {
+            tasks.value.todo.splice(todoIndex, 1);
+            saveToLocalStorage();
+            return;
+        }
+
+        const doneIndex = tasks.value.done.findIndex(t => t.id === id);
+        if (doneIndex !== -1) {
+            tasks.value.done.splice(doneIndex, 1);
+            saveToLocalStorage();
+            return;
+        }
+    }
 
     return{
          // state
@@ -125,6 +140,7 @@ export const useTodoStore = defineStore("todo", () => {
     loadFromLocalStorage,
     isSelectedDate,
     getPriorityBtn,
-    getPriorityColor
+    getPriorityColor,
+    removeTask
     }
 })

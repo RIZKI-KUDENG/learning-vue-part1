@@ -1,8 +1,11 @@
 <script setup>
 import { useTodoStore } from '../../stores/todoStore';
+import { storeToRefs } from 'pinia';
 import InputField from '../elements/InputField.vue';
 
-const {newTodo, addTodo} = useTodoStore()
+const { addTodo} = useTodoStore()
+const store = useTodoStore();
+const { newTodo } = storeToRefs(store);
 </script>
 
 <template>

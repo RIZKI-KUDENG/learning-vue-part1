@@ -1,6 +1,11 @@
 <script setup>
 import { useTodoStore } from '../../stores/todoStore';
-const {priority, priorities, getPriorityBtn} = useTodoStore()
+import { storeToRefs } from 'pinia';
+
+
+const store = useTodoStore();
+const { priority } = storeToRefs(store); 
+const { priorities, getPriorityBtn } = store;
 </script>
 
 <template>

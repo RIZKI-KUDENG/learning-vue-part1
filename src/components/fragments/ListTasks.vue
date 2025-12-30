@@ -1,9 +1,12 @@
 <script setup>
     import { useTodoStore } from "../../stores/todoStore";
+    import { storeToRefs } from "pinia";
     import { ref } from "vue";
 
     const activeTab = ref('done')
-    const {filteredDone, filteredTodos,  toggleTask, getPriorityColor} = useTodoStore()
+    const {  toggleTask, getPriorityColor, removeTask} = useTodoStore()
+    const store = useTodoStore();
+    const { filteredDone, filteredTodos } = storeToRefs(store);
 </script>
 
 <template>
@@ -40,7 +43,7 @@
                 >
               </div>
             </div>
-            <button class="flex-1 text-right">Delete</button>
+            <button @click="removeTask(done.id)" class="flex-1 text-right">Delete</button>
           </div>
         </div>
 
@@ -75,7 +78,7 @@
                 >
               </div>
             </div>
-            <button class="flex-1 text-right">Delete</button>
+            <button @click="removeTask(todo.id)" class="flex-1 text-right">Delete</button>
           </div>
         </div>
       </div>

@@ -1,7 +1,10 @@
 <script setup>
 import { useTodoStore } from "../../stores/todoStore";
+import { storeToRefs } from "pinia";
 
-const {shiftDate, visibleDates, selectDate, isSelectedDate, selectedDate} = useTodoStore()
+const {shiftDate, selectDate, isSelectedDate} = useTodoStore()
+const store = useTodoStore();
+const { selectedDate, visibleDates  } = storeToRefs(store);
 
 const formatDateDisplay = (date) => {
     return new Intl.DateTimeFormat("id-ID", {
