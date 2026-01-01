@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "../pages/LoginPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import TodoListPage from "../pages/TodoListPage.vue";
+import WeatherPage from "../pages/WeatherPage.vue";
 
 const routes = [
     {
@@ -16,6 +17,10 @@ const routes = [
     {
         path: "/",
         component: TodoListPage,
+    },
+    {
+        path: "/weather",
+        component: WeatherPage
     }
 ]
 
