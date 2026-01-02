@@ -1,13 +1,16 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { bgMap } from "../utils/weatherTheme";
 
 export const useWeatherStore = defineStore("weather", () => {
   const loading = ref(false);
   const weather = ref(null);
   const error = ref(null);
   const city = ref("Jakarta");
+  const history = ref([]);
 
   const fetchWeather = async () => {
+    if(!city.value) return
     loading.value = true;
     error.value = null;
     try {
@@ -21,7 +24,7 @@ export const useWeatherStore = defineStore("weather", () => {
 
       const data = await res.json();
       weather.value = data;
-      console.log(weather.value);
+      saveToLocalStorage();
     } catch (err) {
       error.value = err.message;
     } finally {
@@ -31,62 +34,59 @@ export const useWeatherStore = defineStore("weather", () => {
 
   const getIcon = (icon) => {
     return `https://openweathermap.org/img/wn/${icon}@2x.png`;
+  };
+
+  const getBgCard = (icon) => {
+    const code = icon.slice(0, 2);
+    const time = icon.slice(2);
+
+    return bgMap[code]?.[time] || "bg-slate-200";
+  };
+
+  const setCity = (newCity) => {
+    if (!newCity) return;
+    city.value = newCity.trim()
+
+    history.value = history.value.filter(
+      (c) => c.toLowerCase() !== newCity.toLowerCase()
+    );
+
+    history.value.unshift(newCity);
+    if (history.value.length > 5) {
+      history.value.pop();
+    }
+
+    saveToLocalStorage();
+  };
+
+  const saveToLocalStorage = () => {
+    localStorage.setItem(
+      "weatherHistory",
+      JSON.stringify({
+        city: city.value,
+        history: history.value,
+      })
+    );
+  };
+
+  const loadFromLocalStorage = () => {
+    const data = JSON.parse(localStorage.getItem("weatherHistory"));
+    if (data) {
+      city.value = data.city || "Jakarta";
+      history.value = data.history || [];
+    }
   }
-
-const bgMap = {
-  '01': {
-    d: 'bg-sky-300',  
-    n: 'bg-slate-400'  
-  },
-  '02': {
-    d: 'bg-sky-400',
-    n: 'bg-slate-500'
-  },
-  '03': {
-    d: 'bg-slate-300',
-    n: 'bg-slate-600'
-  },
-  '04': {
-    d: 'bg-slate-200',
-    n: 'bg-slate-200'
-  },
-  '09': {
-    d: 'bg-sky-100',
-    n: 'bg-slate-600'
-  },
-  '10': {
-    d: 'bg-blue-500',
-    n: 'bg-blue-900'
-  },
-  '11': {
-    d: 'bg-blue-400',
-    n: 'bg-blue-800'
-  },
-  '13': {
-    d: 'bg-blue-300',
-    n: 'bg-slate-500'
-  },
-  '50': {
-    d: 'bg-blue-200',
-    n: 'bg-slate-500'
-  },
-}
-const getBgCard = (icon) => {
-  const code = icon.slice(0, 2) 
-  const time = icon.slice(2)    
-
-  return bgMap[code]?.[time] || 'bg-slate-200'
-}
-
-
   return {
     loading,
     weather,
     error,
     city,
-    bgMap,
+    history,
     fetchWeather,
     getIcon,
     getBgCard,
+    setCity,
+    saveToLocalStorage,
+    loadFromLocalStorage
   };
 });

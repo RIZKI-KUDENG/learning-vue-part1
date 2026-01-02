@@ -1,19 +1,32 @@
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useWeatherStore } from "../stores/weatherStore";
 import { storeToRefs } from "pinia";
 
 const store = useWeatherStore();
-const { loading, weather, error, city,  } = storeToRefs(store);
-const { fetchWeather, getIcon, getBgCard } = useWeatherStore();
+const { loading, weather, error, history } = storeToRefs(store);
+const { fetchWeather, getIcon, getBgCard, loadFromLocalStorage, setCity } = store;
 
 const isNight = computed(() => {
-  return weather.value?.weather[0].icon.includes("n");
+  const icon = weather.value?.weather?.[0]?.icon
+  return icon?.includes("n") ?? false
 });
 
+
 onMounted(() => {
+  loadFromLocalStorage();
   fetchWeather();
 });
+
+const inputCity = ref('')
+
+const search = () => {
+  if (!inputCity.value) return
+   console.log('SEARCH CLICK', inputCity.value)
+  setCity(inputCity.value)
+  fetchWeather()
+  inputCity.value = ''
+}
 </script>
 
 <template>
@@ -22,19 +35,28 @@ onMounted(() => {
 
     <div class="flex gap-2 mb-4">
       <input
-        @keyup.enter="fetchWeather"
         class="border p-2 rounded w-full"
-        v-model="city"
+        v-model="inputCity"
         placeholder="Input City"
       />
       <button
-        v-on:click="fetchWeather"
+        v-on:click="search"
         :disabled="loading"
         class="bg-blue-300 p-2 rounded w-full"
       >
         Input
       </button>
     </div>
+    <div class="flex gap-2 mt-4">
+  <button
+    v-for="city in history"
+    :key="city"
+    @click="setCity(city); fetchWeather()"
+    class="px-2 py-1 border rounded"
+  >
+    {{ city }}
+  </button>
+</div>
 
     <!-- Loading -->
     <p v-if="loading">Loading weather...</p>
@@ -45,6 +67,8 @@ onMounted(() => {
     </p>
 
     <!-- Success -->
+     
+    
     <div
       v-else-if="weather"
       :class="[getBgCard(weather.weather[0].icon), isNight ? 'text-white' : 'text-slate-900']"
