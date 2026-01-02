@@ -4,7 +4,7 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 const store = useProductStore();
-const { products, loading, error } = storeToRefs(store);
+const { product, loading, error } = storeToRefs(store);
 const { fetchProductsById } = store;
 
 const props = defineProps({
@@ -24,10 +24,10 @@ onMounted(() => {
     <p v-if="loading">Loading...</p>
     <p v-if="error">{{ error }}</p>
 
-    <div v-if="products">
-      <h2>{{ products.title }}</h2>
-      <p>{{ products.description }}</p>
-      <p>Price: {{ products.price }}</p>
+    <div v-if="product">
+      <h2>{{ product.title }}</h2>
+      <p>{{ product.description }}</p>
+      <p>Price: {{ product.price }}</p>
     </div>
   </div>
 

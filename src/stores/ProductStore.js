@@ -4,11 +4,13 @@ import { getProducts, getProductsById } from "../service/productServices";
 export const useProductStore = defineStore("product", {
     state: () => ({
         products: [],
+        product: null,
         loading: false,
         error: null
     }),
     actions: {
         async fetchProducts () {
+            if(this.products.length > 0) return;
             this.loading = true;
             this.error = null;
             try {
@@ -25,7 +27,7 @@ export const useProductStore = defineStore("product", {
             this.error = null;
             try {
                 const res = await getProductsById(id);
-                this.products = res;
+                this.product = res;
             }catch (err){
                 this.error = err.message;
             }finally{
