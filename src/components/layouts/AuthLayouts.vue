@@ -13,6 +13,7 @@ defineProps({
   footerLinkText: String,
   footerLinkTo: String,
 });
+defineEmits(["submit"]);
 </script>
 
 <template>
@@ -23,7 +24,7 @@ defineProps({
         <p v-if="subtitle">{{ subtitle }}</p>
       </div>
       <div class="mt-4">
-        <form action="" class="flex flex-col gap-3">
+        <form action="" @submit.prevent="$emit('submit')" class="flex flex-col gap-3">
           <slot></slot>
           <div class="text-center">
             <button
