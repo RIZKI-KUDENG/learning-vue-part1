@@ -16,6 +16,8 @@ export const useAuthStore = defineStore("auth", () => {
         const res = await login(data)
         token.value = res.token
         isAuthenticated.value = true
+        user.value = data.username
+        localStorage.setItem("user", data.username)
         localStorage.setItem("token", res.token)
         return true
     }catch (err){
@@ -42,6 +44,7 @@ export const useAuthStore = defineStore("auth", () => {
    }
    const logout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("user")
     token.value = null
     user.value = null
     isAuthenticated.value = false
